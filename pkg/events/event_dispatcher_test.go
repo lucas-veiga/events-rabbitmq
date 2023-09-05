@@ -121,6 +121,33 @@ func (suite *EventDispatcherTestSuite) TestEventDispatcher_Has() {
 	suite.True(suite.eventDispatcher.Has(suite.event2.GetName(), &suite.handler3))
 }
 
+func (suite *EventDispatcherTestSuite) TestEventDispatcher_Remove() {
+	err := suite.eventDispatcher.Register(suite.event.GetName(), &suite.handler)
+	suite.Nil(err)
+	suite.Equal(1, len(suite.eventDispatcher.handlers[suite.event.GetName()]))
+
+	err = suite.eventDispatcher.Register(suite.event.GetName(), &suite.handler2)
+	suite.Nil(err)
+	suite.Equal(2, len(suite.eventDispatcher.handlers[suite.event.GetName()]))
+
+	err = suite.eventDispatcher.Register(suite.event2.GetName(), &suite.handler3)
+	suite.Nil(err)
+	suite.Equal(1, len(suite.eventDispatcher.handlers[suite.event2.GetName()]))
+
+	err = suite.eventDispatcher.Remove(suite.event.GetName(), &suite.handler)
+	suite.Nil(err)
+	suite.Equal(1, len(suite.eventDispatcher.handlers[suite.event.GetName()]))
+	suite.Equal(&suite.handler2, suite.eventDispatcher.handlers[suite.event.GetName()][0])
+
+	err = suite.eventDispatcher.Remove(suite.event.GetName(), &suite.handler2)
+	suite.Nil(err)
+	suite.Equal(0, len(suite.eventDispatcher.handlers[suite.event.GetName()]))
+
+	err = suite.eventDispatcher.Remove(suite.event2.GetName(), &suite.handler3)
+	suite.Nil(err)
+	suite.Equal(0, len(suite.eventDispatcher.handlers[suite.event2.GetName()]))
+}
+
 type MockEventHandler struct {
 	mock.Mock
 }
