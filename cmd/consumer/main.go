@@ -13,7 +13,7 @@ func main() {
 	defer ch.Close()
 
 	msgs := make(chan amqp.Delivery)
-	go rabbitmq.Consume(ch, msgs)
+	go rabbitmq.Consume(ch, msgs, "orders")
 	for msg := range msgs {
 		println(string(msg.Body))
 		msg.Ack(false)
